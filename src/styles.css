@@ -1,0 +1,103 @@
+/* CSS Reset 
+ * Link: https://mattbrictson.com/blog/css-normalize-and-reset
+ * Link: https://www.joshwcomeau.com/css/custom-css-reset/
+ * Note: Use all: revert; to use original browser default 
+ */
+@import '../node_modules/modern-normalize/modern-normalize.css';
+
+:root {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+figure,
+p,
+ol,
+ul {
+  margin: 0;
+}
+
+/* add role=list to keep list semantics but hide the bullets in those cases */
+ol[role='list'],
+ul[role='list'] {
+  list-style: none;
+  padding-inline: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+/* This ensures that large images shrink to fit within their container, instead 
+of overflowing and causing layout problems. */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+/* This algorithm will make sure that the final line of text has at least two 
+words. It also makes other subtle tweaks to improve the visual balance of the 
+paragraph: */
+p {
+  text-wrap: pretty;
+}
+
+/* The algorithm tries to make each line of text roughly the same length. 
+This tends to make two-line headings feel a lot more balanced. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  text-wrap: balance;
+}
+
+/* Custom CSS */
+
+/* https://www.aleksandrhovhannisyan.com/blog/62-5-percent-font-size-trick/ */
+/* Don’t use it unless you know you’re never going to need to import other UI component libraries */
+html {
+  /* 62.5% of 16px user agent font size is 10px */
+  font-size: 62.5%;
+}
+
+body {
+  /* Setting the font size of our body to be 1.6rem, which scales us back up to 
+    an effective font size of 16px for all visible text on the page */
+  font-size: 1.6rem;
+}
+
+/* Material Fonts Outline Style */
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 20;
+}
