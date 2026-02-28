@@ -16,4 +16,10 @@ export default defineConfig([
     language: 'css/css',
     extends: ['css/recommended'],
   },
+  {
+    files: ['**/*.test.js', '**/__tests__/*'],
+    env: { jest: true },
+    plugins: ['jest'],
+    extends: ['plugin:jest/recommended'],
+  },
 ]);
