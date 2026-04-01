@@ -11,7 +11,7 @@
     "dev": "webpack serve --config webpack.dev.js",
     "deploy": "git subtree push --prefix dist origin gh-pages",
     "test": "jest",
-    "watch": "jest --watch *.js"
+    "watch": "jest --watchAll"
   },
   "keywords": [],
   "author": "",
