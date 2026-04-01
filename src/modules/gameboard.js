@@ -1,4 +1,4 @@
-import Ships from './ships.js';
+import Ships from './ships';
 
 export default class Gameboard {
   constructor() {
@@ -51,23 +51,20 @@ export default class Gameboard {
     return true;
   }
 
-  isValid(posA, posB) {
+  isValid(pos) {
     return (
-      posA[0] < this.rows &&
-      posA[0] >= 0 &&
-      posA[1] < this.cols &&
-      posA[1] >= 0 &&
-      posB[0] < this.rows &&
-      posB[0] >= 0 &&
-      posB[1] < this.cols &&
-      posB[1] >= 0
+      pos[0] < this.rows && pos[0] >= 0 && pos[1] < this.cols && pos[1] >= 0
     );
   }
 
   placeShip(posA, posB) {
     const orientation = this.findOrientation(posA, posB);
     // don't place ship if co-ordinates are filled already or if out of bounds
-    if (!this.isEmpty(orientation, posA, posB) || !this.isValid(posA, posB))
+    if (
+      !this.isEmpty(orientation, posA, posB) ||
+      !this.isValid(posA) ||
+      !this.isValid(posB)
+    )
       return;
     const length = this.findLength(orientation, posA, posB);
     const ship = new Ships(length);
@@ -84,5 +81,20 @@ export default class Gameboard {
       }
     }
   }
+
+  receiveAttack(pos) {
+    if (!this.isValid(pos)) return; // co-ordinates must not be out of bounds
+    let [x, y] = pos;
+    const cell = this.grid[x][y];
+    if (cell == -1) {
+      this.missedShots.push(pos);
+      return;
+    } else {
+      cell.hit();
+    }
+  }
 }
 
+let gameboard = new Gameboard();
+gameboard.placeShip([0, 0], [0, 4]);
+gameboard.receiveAttack([0, 0]);
