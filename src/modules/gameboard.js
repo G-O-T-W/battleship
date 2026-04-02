@@ -8,6 +8,17 @@ export default class Gameboard {
     this.grid = Array(this.rows) // instantiate the grid
       .fill()
       .map(() => Array(this.cols).fill(-1));
+    this.ships = [];
+    this.initializeShips();
+  }
+
+  initializeShips() {
+    // Carrier (5 holes), Battleship (4), Cruiser (3), Submarine (3), and Destroyer (2)
+    let lengths = [5, 4, 3, 3, 2];
+    for (let i = 0; i < 5; i++) {
+      const ship = new Ships(lengths[i]);
+      this.ships.push(ship);
+    }
   }
 
   findOrientation(posA, posB) {
@@ -93,8 +104,12 @@ export default class Gameboard {
       cell.hit();
     }
   }
-}
 
-let gameboard = new Gameboard();
-gameboard.placeShip([0, 0], [0, 4]);
-gameboard.receiveAttack([0, 0]);
+  hasAllShipSunk() {
+    // if any ship is not sunk return false;
+    for (const ship of this.ships) {
+      if (ship.isSunk() === false) return false;
+    }
+    return true;
+  }
+}
