@@ -50,4 +50,12 @@ describe('Gameboard class is working correctly', () => {
     expect(shipOne.numOfHits).toEqual(3);
     expect(shipOne.numOfHits).toEqual(3);
   });
+
+  test('hasAllShipSunk() is working as intended', () => {
+    expect(gameBoard.hasAllShipSunk()).toBe(false);
+    gameBoard.ships.forEach((ship) => {
+      ship.numOfHits = ship.length;
+    });
+    expect(gameBoard.hasAllShipSunk()).toBe(true);
+  });
 });
