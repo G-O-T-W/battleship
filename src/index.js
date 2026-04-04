@@ -1,3 +1,6 @@
 import './styles.css';
+import Controller from './modules/controller';
 
-console.log('Hello World');
+const controller = new Controller();
+
+controller.setupEventListeners();
