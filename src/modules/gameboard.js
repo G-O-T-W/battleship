@@ -68,7 +68,7 @@ export default class Gameboard {
     );
   }
 
-  placeShip(posA, posB) {
+  placeShip(ship, posA, posB) {
     const orientation = this.findOrientation(posA, posB);
     // don't place ship if co-ordinates are filled already or if out of bounds
     if (
@@ -77,8 +77,6 @@ export default class Gameboard {
       !this.isValid(posB)
     )
       return;
-    const length = this.findLength(orientation, posA, posB);
-    const ship = new Ships(length);
     const [start, end] = this.findRange(orientation, posA, posB);
     if (orientation == 'h') {
       const i = posA[0];

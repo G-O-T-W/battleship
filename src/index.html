@@ -13,5 +13,31 @@
   </head>
   <body>
     <h1>Battleship</h1>
+    <button id="open-rules-btn">See Rules</button>
+    <dialog id="rules-dialog">
+      <div class="welcome-screen">
+        <h2>Welcome to Battleship</h2>
+        <h3>Before you proceed with the game, please review the rules:</h3>
+        <hr />
+        <ul>
+          <li>The game is played on a 10×10 grid.</li>
+          <li>Each player places 5 ships on their grid:</li>
+          <ul>
+            <li>Carrier – 5 cells</li>
+            <li>Battleship – 4 cells</li>
+            <li>Cruiser – 3 cells</li>
+            <li>Submarine – 3 cells</li>
+            <li>Destroyer – 2 cells</li>
+          </ul>
+          <li>Ships can be placed horizontally or vertically.</li>
+          <li>Ships cannot overlap or go outside the grid.</li>
+          <li>Players take turns attacking one cell.</li>
+          <li>A hit damages a ship. A miss ends the turn.</li>
+          <li>A ship is sunk when all of its cells are hit.</li>
+          <li>The first player to sink all 5 enemy ships wins.</li>
+        </ul>
+        <button id="close-rules-btn" autofocus>Close</button>
+      </div>
+    </dialog>
   </body>
 </html>
