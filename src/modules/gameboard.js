@@ -110,4 +110,10 @@ export default class Gameboard {
     }
     return true;
   }
+
+  randomlyPlaceShips() {
+    this.ships.forEach((ship, index) => {
+      this.placeShip(ship, [index, 0], [index, ship.length - 1]);
+    });
+  }
 }

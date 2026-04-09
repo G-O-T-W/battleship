@@ -91,6 +91,8 @@ body {
   /* Setting the font size of our body to be 1.6rem, which scales us back up to 
     an effective font size of 16px for all visible text on the page */
   font-size: 1.6rem;
+  --missed-clr: #ccd;
+  --hit-clr: red;
 }
 
 /* Material Fonts Outline Style */
@@ -100,4 +102,37 @@ body {
     'wght' 400,
     'GRAD' 0,
     'opsz' 20;
+}
+
+.play-area {
+  display: flex;
+  padding: 4px;
+  gap: 48px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(10, auto);
+}
+
+.board {
+  border: 1px solid black;
+}
+
+.cell {
+  border: 1px solid black;
+  height: 24px;
+  width: 24px;
+}
+
+.cell:hover {
+  cursor: pointer;
+}
+
+.miss {
+  background-color: var(--missed-clr);
+}
+
+.hit {
+  background-color: var(--hit-clr);
 }
