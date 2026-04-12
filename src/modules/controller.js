@@ -38,8 +38,7 @@ export default class Controller {
   }
 
   init() {
-    this.ui.setupDialogListeners();
-    this.ui.setupButtonListeners(
+    this.ui.setupListeners(
       this.startGame.bind(this),
       this.randomize.bind(this)
     );

@@ -1,11 +1,13 @@
 export default class UserInterface {
   constructor() {
+    this.menuButton = document.querySelector('#menu-btn');
     this.rulesDialog = document.querySelector('#rules-dialog');
     this.openRulesButton = document.querySelector('#open-rules-btn');
     this.closeRulesButton = document.querySelector('#close-rules-btn');
     this.playArea = document.querySelector('.play-area');
     this.gameSetupDialog = document.querySelector('#game-setup-dialog');
     this.gameSetupForm = document.querySelector('#game-setup-form');
+    this.cancelSetupButton = document.querySelector('#cancel-setup-btn');
     this.playerTurnHeader = document.querySelector('.player-turn-header');
     this.winnerDialog = document.querySelector('.winner-dialog');
     this.winnerHeader = document.querySelector('.winner-header');
@@ -24,7 +26,7 @@ export default class UserInterface {
     );
   }
 
-  setupDialogListeners() {
+  setupListeners(startGame, randomize) {
     this.openRulesButton.addEventListener('click', () =>
       this.rulesDialog.showModal()
     );
@@ -32,9 +34,12 @@ export default class UserInterface {
     this.closeRulesButton.addEventListener('click', () =>
       this.rulesDialog.close()
     );
-  }
 
-  setupButtonListeners(startGame, randomize) {
+    this.menuButton.addEventListener('click', () => {
+      this.cancelSetupButton.disabled = false;
+      this.openSettings();
+    });
+
     this.gameSetupForm.addEventListener('submit', () => {
       this.clearPlayArea();
       const formData = new FormData(this.gameSetupForm);
@@ -42,6 +47,10 @@ export default class UserInterface {
       const p2name = formData.get('p2name');
       const p2type = formData.get('p2type');
       startGame(p1name, p2name, p2type);
+    });
+
+    this.cancelSetupButton.addEventListener('click', () => {
+      this.gameSetupDialog.close();
     });
 
     this.resetButton.addEventListener('click', () => {

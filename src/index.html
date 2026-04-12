@@ -13,6 +13,7 @@
   </head>
   <body>
     <h1>Battleship</h1>
+    <button id="menu-btn">Menu</button>
     <button id="open-rules-btn">See Rules</button>
     <dialog id="rules-dialog" closedby="any">
       <div class="welcome-screen">
@@ -60,6 +61,7 @@
           <option value="human">Human</option>
           <option value="computer" selected>Computer</option>
         </select>
+        <button id="cancel-setup-btn" disabled>Cancel</button>
         <button form="game-setup-form" type="submit">Start</button>
       </form>
     </dialog>

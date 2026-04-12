@@ -125,10 +125,6 @@ dialog::backdrop {
   grid-column-start: 2;
 }
 
-#game-setup-form > button {
-  grid-column: span 2;
-}
-
 .play-area {
   display: flex;
   justify-content: space-around;
