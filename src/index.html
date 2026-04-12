@@ -39,7 +39,28 @@
         <button id="close-rules-btn" autofocus>Close</button>
       </div>
     </dialog>
-    <div class="play-area">
-    </div>
+    <h2 class="player-turn-header"></h2>
+    <dialog id="game-setup-dialog">
+      <h2>Game Setup</h2>
+      <form id="game-setup-form" method="dialog">
+        <input type="text" name="p1name" id="p1name" value="Player 1" />
+        <input type="text" name="p2name" id="p2name" value="Player 2" />
+        <select name="p1type" id="p1type">
+          <option value="human" selected>Human</option>
+          <option value="computer">Computer</option>
+        </select>
+        <select name="p2type" id="p2type">
+          <option value="human">Human</option>
+          <option value="computer" selected>Computer</option>
+        </select>
+        <button form="game-setup-form" type="submit">Start</button>
+      </form>
+    </dialog>
+    <dialog class="winner-dialog">
+      <h2 class="winner-header"></h2>
+      <button id="reset-btn">Reset</button>
+      <button id="new-game-btn">New Game</button>
+    </dialog>
+    <div class="play-area"></div>
   </body>
 </html>
