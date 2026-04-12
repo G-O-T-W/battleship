@@ -66,6 +66,9 @@ export default class Controller {
         this.checkAllReady.bind(this)
       );
     }
+    if (p2type === 'human') {
+      this.ui.openInstructions();
+    }
     this.roundPlayer = this.players[0];
     this.ui.showPlayerTurn(this.roundPlayer.name);
   }
@@ -83,7 +86,7 @@ export default class Controller {
           this.whoseTurn.bind(this),
           this.checkAllReady.bind(this)
         );
-        this.ui.toggleShipVisiblity(playerID);
+        this.ui.toggleShipVisibility(playerID);
         player.isReady = true;
       }
     }

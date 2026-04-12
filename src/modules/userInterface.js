@@ -17,7 +17,11 @@ export default class UserInterface {
     this.p2RandomizeButton = document.querySelector(
       '#player-two>button.randomize-btn'
     );
-    this.playButton = document.querySelector('#play-btn');
+    this.hideButton = document.querySelector('#hide-btn');
+    this.instructionDialog = document.querySelector('#instructions-dialog');
+    this.closeInstructionsButton = document.querySelector(
+      '#close-instructions-btn'
+    );
   }
 
   setupDialogListeners() {
@@ -30,7 +34,7 @@ export default class UserInterface {
     );
   }
 
-  setupButtonListeners(startGame, randomize, hasPlacedShips) {
+  setupButtonListeners(startGame, randomize) {
     this.gameSetupForm.addEventListener('submit', () => {
       this.clearPlayArea();
       const formData = new FormData(this.gameSetupForm);
@@ -64,11 +68,24 @@ export default class UserInterface {
       randomize('player-two');
     });
 
-    this.playButton.addEventListener('click', () => {});
+    this.hideButton.addEventListener('click', () => {
+      const shipCells = document.querySelectorAll('[isShip="yes"]');
+      shipCells.forEach((shipCell) => {
+        shipCell.classList.remove('visibility');
+      });
+    });
+
+    this.closeInstructionsButton.addEventListener('click', () => {
+      this.instructionDialog.close();
+    });
   }
 
   openSettings() {
     this.gameSetupDialog.showModal();
+  }
+
+  openInstructions() {
+    this.instructionDialog.showModal();
   }
 
   async renderShips(playerID) {
@@ -85,7 +102,7 @@ export default class UserInterface {
     }
   }
 
-  toggleShipVisiblity(playerID) {
+  toggleShipVisibility(playerID) {
     const shipCells = document.querySelectorAll(`#${playerID} [isShip="yes"]`);
     shipCells.forEach((shipCell) => {
       shipCell.classList.toggle('visibility');
