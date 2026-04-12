@@ -4,9 +4,16 @@ export default class UserInterface {
     this.openRulesButton = document.querySelector('#open-rules-btn');
     this.closeRulesButton = document.querySelector('#close-rules-btn');
     this.playArea = document.querySelector('.play-area');
+    this.gameSetupDialog = document.querySelector('#game-setup-dialog');
+    this.gameSetupForm = document.querySelector('#game-setup-form');
+    this.playerTurnHeader = document.querySelector('.player-turn-header');
+    this.winnerDialog = document.querySelector('.winner-dialog');
+    this.winnerHeader = document.querySelector('.winner-header');
+    this.resetButton = document.querySelector('#reset-btn');
+    this.newGameButton = document.querySelector('#new-game-btn');
   }
 
-  setupDialogListeners() {
+  setupDialogListeners(startGame) {
     this.openRulesButton.addEventListener('click', () =>
       this.rulesDialog.showModal()
     );
@@ -14,13 +21,37 @@ export default class UserInterface {
     this.closeRulesButton.addEventListener('click', () =>
       this.rulesDialog.close()
     );
+
+    this.gameSetupForm.addEventListener('submit', () => {
+      this.clearPlayArea();
+      const formData = new FormData(this.gameSetupForm);
+      const p1name = formData.get('p1name');
+      const p1type = formData.get('p1type');
+      const p2name = formData.get('p2name');
+      const p2type = formData.get('p2type');
+      startGame(p1name, p1type, p2name, p2type);
+    });
+
+    this.resetButton.addEventListener('click', () => console.log('Reset game'));
+
+    this.newGameButton.addEventListener('click', () => {
+      this.winnerDialog.close();
+      this.openSettings();
+    });
   }
 
-  setupGameboard(player) {
+  openSettings() {
+    this.gameSetupDialog.showModal();
+  }
+
+  renderGameboard(name, grid, playHumanRound, whoseTurn) {
     const div = document.createElement('div');
     div.classList.add('board');
-    div.id = `${player.name}`;
-    player.gameBoard.grid.forEach((row, rowIndex) => {
+    div.id = name;
+    const p = document.createElement('p');
+    p.textContent = name;
+    div.appendChild(p);
+    grid.forEach((row, rowIndex) => {
       const rowDiv = document.createElement('div');
       rowDiv.classList.add('row');
       row.forEach((cell, colIndex) => {
@@ -29,39 +60,36 @@ export default class UserInterface {
         cellDiv.setAttribute('rowIndex', `${rowIndex}`);
         cellDiv.setAttribute('colIndex', `${colIndex}`);
         rowDiv.appendChild(cellDiv);
-        cellDiv.addEventListener('click', this.handleBoardClick.bind(player));
+        cellDiv.addEventListener('click', (e) => {
+          if (
+            whoseTurn() === name || // a player can't click on their own cell
+            cellDiv.getAttribute('isMarked') === 'yes' // if cell already marked do nothing
+          )
+            return;
+          cellDiv.setAttribute('isMarked', 'yes');
+          if (cell == -1) {
+            cellDiv.classList.add('miss');
+          } else {
+            cellDiv.classList.add('hit');
+          }
+          playHumanRound(rowIndex, colIndex);
+        });
       });
       div.appendChild(rowDiv);
     });
     this.playArea.appendChild(div);
   }
 
-  handleBoardClick(e) {
-    const cellDiv = e.target;
-    if (cellDiv.getAttribute('isMarked') === 'yes') return; // if cell already marked do nothing
-    cellDiv.setAttribute('isMarked', 'yes');
-    const rowIndex = cellDiv.getAttribute('rowIndex');
-    const colIndex = cellDiv.getAttribute('colIndex');
-    const cell = this.gameBoard.grid[rowIndex][colIndex];
-    this.gameBoard.receiveAttack([rowIndex, colIndex]);
-    console.log(
-      `[${rowIndex}, ${colIndex}] was clicked on ${this.name}'s board.`
-    );
-    if (cell === -1) {
-      console.log('Shot Missed.');
-      cellDiv.classList.add('miss');
-    } else {
-      console.log("It's a hit!");
-      cellDiv.classList.add('hit');
-      if (this.gameBoard.hasAllShipSunk()) {
-        console.log(`${this.name} has lost!`);
-        alert(`${this.name} has lost!`);
-        this.hasWon = true;
-      }
-    }
+  showPlayerTurn(name) {
+    this.playerTurnHeader.textContent = `It is ${name}'s turn.`;
   }
 
-  clearBoard() {
+  openWinnerDialog(name) {
+    this.winnerHeader.textContent = `${name} Wins!`;
+    this.winnerDialog.showModal();
+  }
+
+  clearPlayArea() {
     const playArea = document.querySelector('.play-area');
     playArea.replaceChildren();
   }

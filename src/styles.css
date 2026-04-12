@@ -93,6 +93,7 @@ body {
   font-size: 1.6rem;
   --missed-clr: #ccd;
   --hit-clr: red;
+  --backdrop-clr: rgba(0, 0, 0, 0.69);
 }
 
 /* Material Fonts Outline Style */
@@ -104,10 +105,31 @@ body {
     'opsz' 20;
 }
 
+dialog::backdrop {
+  background-color: var(--backdrop-clr);
+}
+
+#game-setup-dialog > h2 {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+#game-setup-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+#game-setup-form > button {
+  grid-column: span 2;
+}
+
 .play-area {
   display: flex;
+  justify-content: space-around;
+  max-width: 80%;
   padding: 4px;
-  gap: 48px;
+  border: 1px solid #000;
 }
 
 .row {
@@ -116,7 +138,7 @@ body {
 }
 
 .board {
-  border: 1px solid black;
+  text-align: center;
 }
 
 .cell {
