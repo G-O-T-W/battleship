@@ -6,6 +6,34 @@ export default class Controller {
     this.ui = new UserInterface();
     this.players = [];
     this.roundPlayer;
+    this.possibleComputerMoves = [];
+    this.populateComputerMoves();
+  }
+
+  populateComputerMoves() {
+    for (let i = 0; i < 10; i++) {
+      for (let j = 0; j < 10; j++) {
+        this.possibleComputerMoves.push([i, j]);
+      }
+    }
+    // Fisher-Yates sorting algorithm
+    let currentIndex = this.possibleComputerMoves.length;
+
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+      // Pick a remaining element...
+      let randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+
+      // And swap it with the current element.
+      [
+        this.possibleComputerMoves[currentIndex],
+        this.possibleComputerMoves[randomIndex],
+      ] = [
+        this.possibleComputerMoves[randomIndex],
+        this.possibleComputerMoves[currentIndex],
+      ];
+    }
   }
 
   init() {
@@ -39,7 +67,7 @@ export default class Controller {
     console.log(`${this.roundPlayer.name} clicked [${x}, ${y}].`);
     this.togglePlayer(); // toggle first so that right board is updated
     this.handleAttack(x, y);
-   if(this.checkWinner()) return;
+    if (this.checkWinner()) return;
     if (this.roundPlayer.type === 'computer') {
       this.playComputerRound();
     }
@@ -48,20 +76,16 @@ export default class Controller {
   playComputerRound() {
     console.log('Computer Plays Now');
     setTimeout(() => {
-      this.togglePlayer();
-
-      //       let x = parseInt(`${Math.random()*10}`);
-      //       let y = parseInt(`${Math.random()*10}`);
-      // const missedShots = this.roundPlayer.gameBoard.missedShots;
-      //       while (missedShots.includes([x, y])) {
-      //
-      //       }
-      //       this.roundPlayer.
-    }, 30);
+      this.togglePlayer(); // toggle first so that right board is updated
+      const [x, y] = this.possibleComputerMoves.pop();
+      this.handleAttack(x, y);
+      if (this.checkWinner()) return;
+    }, 500);
   }
 
   handleAttack(x, y) {
     this.roundPlayer.gameBoard.receiveAttack([x, y]);
+    this.ui.repaintCell(this.roundPlayer.name, x, y);
     if (this.roundPlayer.gameBoard.hasAllShipSunk()) {
       this.togglePlayer();
       this.roundPlayer.hasWon = true;
@@ -92,5 +116,7 @@ export default class Controller {
 
   resetGame() {
     this.players = [];
+    this.possibleComputerMoves = [];
+    this.populateComputerMoves();
   }
 }

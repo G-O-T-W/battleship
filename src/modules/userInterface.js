@@ -69,6 +69,11 @@ export default class UserInterface {
         cellDiv.classList.add('cell');
         cellDiv.setAttribute('rowIndex', `${rowIndex}`);
         cellDiv.setAttribute('colIndex', `${colIndex}`);
+        if (cell === -1) {
+          cellDiv.setAttribute('isShip', 'no');
+        } else {
+          cellDiv.setAttribute('isShip', 'yes');
+        }
         rowDiv.appendChild(cellDiv);
         cellDiv.addEventListener('click', (e) => {
           if (
@@ -77,17 +82,32 @@ export default class UserInterface {
           )
             return;
           cellDiv.setAttribute('isMarked', 'yes');
-          if (cell == -1) {
-            cellDiv.classList.add('miss');
-          } else {
-            cellDiv.classList.add('hit');
-          }
           playHumanRound(rowIndex, colIndex);
         });
       });
       div.appendChild(rowDiv);
     });
     this.playArea.appendChild(div);
+  }
+
+  repaintCell(boardID, x, y) {
+    const board = document.getElementById(boardID);
+    const rows = [...board.children].splice(1); // first element is header so it must be skipped
+    rows.forEach((row, i) => {
+      const cells = [...row.children];
+      cells.forEach((cell, j) => {
+        if (i == x && j == y) {
+          const rowIndex = parseInt(cell.getAttribute('rowIndex'));
+          const colIndex = parseInt(cell.getAttribute('colIndex'));
+          console.log(`Marking cell [${rowIndex}, ${colIndex}]`);
+          if (cell.getAttribute('isShip') === 'yes') {
+            cell.classList.add('hit');
+          } else {
+            cell.classList.add('miss');
+          }
+        }
+      });
+    });
   }
 
   showPlayerTurn(name) {
