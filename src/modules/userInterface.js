@@ -32,7 +32,17 @@ export default class UserInterface {
       startGame(p1name, p1type, p2name, p2type);
     });
 
-    this.resetButton.addEventListener('click', () => console.log('Reset game'));
+    this.resetButton.addEventListener('click', () => {
+      console.log('Reset Game');
+      this.winnerDialog.close();
+      this.clearPlayArea();
+      const formData = new FormData(this.gameSetupForm);
+      const p1name = formData.get('p1name');
+      const p1type = formData.get('p1type');
+      const p2name = formData.get('p2name');
+      const p2type = formData.get('p2type');
+      startGame(p1name, p1type, p2name, p2type);
+    });
 
     this.newGameButton.addEventListener('click', () => {
       this.winnerDialog.close();
