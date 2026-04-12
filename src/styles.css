@@ -94,6 +94,7 @@ body {
   --missed-clr: #ccd;
   --hit-clr: red;
   --backdrop-clr: rgba(0, 0, 0, 0.69);
+  --ship-clr: blue;
 }
 
 /* Material Fonts Outline Style */
@@ -120,6 +121,10 @@ dialog::backdrop {
   gap: 8px;
 }
 
+#p2type {
+  grid-column-start: 2;
+}
+
 #game-setup-form > button {
   grid-column: span 2;
 }
@@ -127,9 +132,43 @@ dialog::backdrop {
 .play-area {
   display: flex;
   justify-content: space-around;
-  max-width: 80%;
   padding: 4px;
-  border: 1px solid #000;
+}
+
+#player-one {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 8px;
+  padding: 8px;
+}
+
+#player-two {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 8px;
+  padding: 8px;
+}
+
+.player-para {
+  grid-column: span 2;
+}
+
+.ships-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ships-div > img {
+  height: 72px;
+}
+
+#player-two button {
+  grid-column-start: 2;
+}
+
+.board-div {
+  border: 1px solid black;
 }
 
 .row {
@@ -137,18 +176,19 @@ dialog::backdrop {
   grid-template-columns: repeat(10, auto);
 }
 
-.board {
-  text-align: center;
-}
-
 .cell {
   border: 1px solid black;
-  height: 24px;
-  width: 24px;
+  height: 48px;
+  width: 48px;
 }
 
 .cell:hover {
   cursor: pointer;
+}
+
+/* keep visbility class before hit class for hit to take precedence */
+.visibility {
+  background-color: var(--ship-clr);
 }
 
 .miss {

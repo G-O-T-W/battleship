@@ -39,16 +39,13 @@
         <button id="close-rules-btn" autofocus>Close</button>
       </div>
     </dialog>
+    <button id="play-btn" disabled>Play</button>
     <h2 class="player-turn-header"></h2>
     <dialog id="game-setup-dialog">
       <h2>Game Setup</h2>
       <form id="game-setup-form" method="dialog">
         <input type="text" name="p1name" id="p1name" value="Player 1" />
         <input type="text" name="p2name" id="p2name" value="Player 2" />
-        <select name="p1type" id="p1type">
-          <option value="human" selected>Human</option>
-          <option value="computer">Computer</option>
-        </select>
         <select name="p2type" id="p2type">
           <option value="human">Human</option>
           <option value="computer" selected>Computer</option>
@@ -61,6 +58,19 @@
       <button id="reset-btn">Reset</button>
       <button id="new-game-btn">New Game</button>
     </dialog>
-    <div class="play-area"></div>
+    <div class="play-area">
+      <div id="player-one">
+        <p class="player-para"></p>
+        <div class="ships-div"></div>
+        <div class="board-div"></div>
+        <button class="randomize-btn">Randomize</button>
+      </div>
+      <div id="player-two">
+        <p class="player-para"></p>
+        <div class="board-div"></div>
+        <div class="ships-div"></div>
+        <button class="randomize-btn">Randomize</button>
+      </div>
+    </div>
   </body>
 </html>
