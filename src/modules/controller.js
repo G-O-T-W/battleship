@@ -8,6 +8,7 @@ export default class Controller {
     this.roundPlayer;
     this.possibleComputerMoves = [];
     this.populateComputerMoves();
+    this.gameStarted = false;
   }
 
   populateComputerMoves() {
@@ -37,24 +38,57 @@ export default class Controller {
   }
 
   init() {
-    this.ui.setupDialogListeners(this.startGame.bind(this));
+    this.ui.setupListeners(
+      this.startGame.bind(this),
+      this.randomize.bind(this)
+    );
     this.ui.openSettings();
   }
 
-  startGame(p1name, p1type, p2name, p2type) {
+  startGame(p1name, p2name, p2type) {
     this.resetGame();
-    this.createPlayer(p1name, p1type);
-    this.createPlayer(p2name, p2type);
+    this.createPlayer('player-one', p1name, 'human');
+    this.createPlayer('player-two', p2name, p2type);
     for (const player of this.players) {
+      this.ui.renderShips(player.ID);
+      if (player.ID === 'player-two') {
+        if (player.type === 'computer')
+          this.ui.disableRandomizeButton('player-two'); // add randomize button if playing against human
+        else this.ui.enableRandomizeButton('player-two');
+      }
       this.ui.renderGameboard(
+        player.ID,
         player.name,
         player.gameBoard.grid,
         this.playHumanRound.bind(this),
-        this.whoseTurn.bind(this)
+        this.whoseTurn.bind(this),
+        this.checkAllReady.bind(this)
       );
+    }
+    if (p2type === 'human') {
+      this.ui.openInstructions();
     }
     this.roundPlayer = this.players[0];
     this.ui.showPlayerTurn(this.roundPlayer.name);
+  }
+
+  randomize(playerID) {
+    if (this.gameStarted) return; // if game has begun then randomize does nothing
+    for (const player of this.players) {
+      if (player.ID === playerID) {
+        player.gameBoard.randomlyPlaceShips();
+        this.ui.renderGameboard(
+          player.ID,
+          player.name,
+          player.gameBoard.grid,
+          this.playHumanRound.bind(this),
+          this.whoseTurn.bind(this),
+          this.checkAllReady.bind(this)
+        );
+        this.ui.toggleShipVisibility(playerID);
+        player.isReady = true;
+      }
+    }
   }
 
   togglePlayer() {
@@ -65,6 +99,7 @@ export default class Controller {
 
   playHumanRound(x, y) {
     console.log(`${this.roundPlayer.name} clicked [${x}, ${y}].`);
+    this.gameStarted = true;
     this.togglePlayer(); // toggle first so that right board is updated
     this.handleAttack(x, y);
     if (this.checkWinner()) return;
@@ -85,7 +120,7 @@ export default class Controller {
 
   handleAttack(x, y) {
     this.roundPlayer.gameBoard.receiveAttack([x, y]);
-    this.ui.repaintCell(this.roundPlayer.name, x, y);
+    this.ui.repaintCell(this.roundPlayer.ID, x, y);
     if (this.roundPlayer.gameBoard.hasAllShipSunk()) {
       this.togglePlayer();
       this.roundPlayer.hasWon = true;
@@ -104,9 +139,12 @@ export default class Controller {
     return false;
   }
 
-  createPlayer(name, type) {
-    const player = new Player(name, type);
-    player.gameBoard.randomlyPlaceShips();
+  createPlayer(ID, name, type) {
+    const player = new Player(ID, name, type);
+    if (type == 'computer') {
+      player.gameBoard.randomlyPlaceShips();
+      player.isReady = true;
+    }
     this.players.push(player);
   }
 
@@ -114,9 +152,17 @@ export default class Controller {
     return this.roundPlayer.name;
   }
 
+  checkAllReady() {
+    for (const player of this.players) {
+      if (player.isReady === false) return false;
+    }
+    return true;
+  }
+
   resetGame() {
     this.players = [];
     this.possibleComputerMoves = [];
     this.populateComputerMoves();
+    this.gameStarted = false;
   }
 }

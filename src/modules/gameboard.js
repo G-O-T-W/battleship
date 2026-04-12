@@ -12,6 +12,12 @@ export default class Gameboard {
     this.initializeShips();
   }
 
+  resetGrid() {
+    this.grid = Array(this.rows) // instantiate the grid
+      .fill()
+      .map(() => Array(this.cols).fill(-1));
+  }
+
   initializeShips() {
     // Carrier (5 holes), Battleship (4), Cruiser (3), Submarine (3), and Destroyer (2)
     let lengths = [5, 4, 3, 3, 2];
@@ -76,7 +82,7 @@ export default class Gameboard {
       !this.isValid(posA) ||
       !this.isValid(posB)
     )
-      return;
+      return -1;
     const [start, end] = this.findRange(orientation, posA, posB);
     if (orientation == 'h') {
       const i = posA[0];
@@ -89,6 +95,7 @@ export default class Gameboard {
         this.grid[i][j] = ship;
       }
     }
+    return 0;
   }
 
   receiveAttack(pos) {
@@ -112,8 +119,23 @@ export default class Gameboard {
   }
 
   randomlyPlaceShips() {
-    this.ships.forEach((ship, index) => {
-      this.placeShip(ship, [index, 0], [index, ship.length - 1]);
+    this.resetGrid();
+    let x, y;
+    let posA = [];
+    let posB = [];
+    this.ships.forEach((ship) => {
+      while (true) {
+        x = Math.floor(Math.random() * (10 - ship.length + 1)); // random number between 0 to 9 - ship.length
+        y = Math.floor(Math.random() * (10 - ship.length + 1));
+        posA = [x, y];
+        if (Math.random() > 0.5) {
+          posB = [x, y + ship.length - 1];
+        } else {
+          posB = [x + ship.length - 1, y];
+        }
+
+        if (this.placeShip(ship, posA, posB) == 0) break;
+      }
     });
   }
 }

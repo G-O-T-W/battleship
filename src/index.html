@@ -13,6 +13,7 @@
   </head>
   <body>
     <h1>Battleship</h1>
+    <button id="menu-btn">Menu</button>
     <button id="open-rules-btn">See Rules</button>
     <dialog id="rules-dialog" closedby="any">
       <div class="welcome-screen">
@@ -39,20 +40,28 @@
         <button id="close-rules-btn" autofocus>Close</button>
       </div>
     </dialog>
+    <dialog id="instructions-dialog">
+      <h2>Playing v/s Human</h2>
+        <hr />
+        <ol>
+          <li>Player 1 goes first and places their ship on the board.</li>
+          <li>Once done, you must press 'Hide My Board' so that Player 2 doesn't see your ships.</li>
+          <li>Player 2 now must place their ships on the board and press 'Hide My Board'.</li>
+          <li>Finally, the game begins and Player 1 can click on Player 2's board.</li>
+      <button id="close-instructions-btn">Close</button>
+    </dialog>
+    <button id="hide-btn">Hide My Board</button>
     <h2 class="player-turn-header"></h2>
     <dialog id="game-setup-dialog">
       <h2>Game Setup</h2>
       <form id="game-setup-form" method="dialog">
         <input type="text" name="p1name" id="p1name" value="Player 1" />
         <input type="text" name="p2name" id="p2name" value="Player 2" />
-        <select name="p1type" id="p1type">
-          <option value="human" selected>Human</option>
-          <option value="computer">Computer</option>
-        </select>
         <select name="p2type" id="p2type">
           <option value="human">Human</option>
           <option value="computer" selected>Computer</option>
         </select>
+        <button id="cancel-setup-btn" disabled>Cancel</button>
         <button form="game-setup-form" type="submit">Start</button>
       </form>
     </dialog>
@@ -61,6 +70,19 @@
       <button id="reset-btn">Reset</button>
       <button id="new-game-btn">New Game</button>
     </dialog>
-    <div class="play-area"></div>
+    <div class="play-area">
+      <div id="player-one">
+        <p class="player-para"></p>
+        <div class="ships-div"></div>
+        <div class="board-div"></div>
+        <button class="randomize-btn">Randomize</button>
+      </div>
+      <div id="player-two">
+        <p class="player-para"></p>
+        <div class="board-div"></div>
+        <div class="ships-div"></div>
+        <button class="randomize-btn">Randomize</button>
+      </div>
+    </div>
   </body>
 </html>

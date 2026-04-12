@@ -1,19 +1,32 @@
 export default class UserInterface {
   constructor() {
+    this.menuButton = document.querySelector('#menu-btn');
     this.rulesDialog = document.querySelector('#rules-dialog');
     this.openRulesButton = document.querySelector('#open-rules-btn');
     this.closeRulesButton = document.querySelector('#close-rules-btn');
     this.playArea = document.querySelector('.play-area');
     this.gameSetupDialog = document.querySelector('#game-setup-dialog');
     this.gameSetupForm = document.querySelector('#game-setup-form');
+    this.cancelSetupButton = document.querySelector('#cancel-setup-btn');
     this.playerTurnHeader = document.querySelector('.player-turn-header');
     this.winnerDialog = document.querySelector('.winner-dialog');
     this.winnerHeader = document.querySelector('.winner-header');
     this.resetButton = document.querySelector('#reset-btn');
     this.newGameButton = document.querySelector('#new-game-btn');
+    this.p1RandomizeButton = document.querySelector(
+      '#player-one>button.randomize-btn'
+    );
+    this.p2RandomizeButton = document.querySelector(
+      '#player-two>button.randomize-btn'
+    );
+    this.hideButton = document.querySelector('#hide-btn');
+    this.instructionDialog = document.querySelector('#instructions-dialog');
+    this.closeInstructionsButton = document.querySelector(
+      '#close-instructions-btn'
+    );
   }
 
-  setupDialogListeners(startGame) {
+  setupListeners(startGame, randomize) {
     this.openRulesButton.addEventListener('click', () =>
       this.rulesDialog.showModal()
     );
@@ -22,14 +35,22 @@ export default class UserInterface {
       this.rulesDialog.close()
     );
 
+    this.menuButton.addEventListener('click', () => {
+      this.cancelSetupButton.disabled = false;
+      this.openSettings();
+    });
+
     this.gameSetupForm.addEventListener('submit', () => {
       this.clearPlayArea();
       const formData = new FormData(this.gameSetupForm);
       const p1name = formData.get('p1name');
-      const p1type = formData.get('p1type');
       const p2name = formData.get('p2name');
       const p2type = formData.get('p2type');
-      startGame(p1name, p1type, p2name, p2type);
+      startGame(p1name, p2name, p2type);
+    });
+
+    this.cancelSetupButton.addEventListener('click', () => {
+      this.gameSetupDialog.close();
     });
 
     this.resetButton.addEventListener('click', () => {
@@ -38,15 +59,33 @@ export default class UserInterface {
       this.clearPlayArea();
       const formData = new FormData(this.gameSetupForm);
       const p1name = formData.get('p1name');
-      const p1type = formData.get('p1type');
       const p2name = formData.get('p2name');
       const p2type = formData.get('p2type');
-      startGame(p1name, p1type, p2name, p2type);
+      startGame(p1name, p2name, p2type);
     });
 
     this.newGameButton.addEventListener('click', () => {
       this.winnerDialog.close();
       this.openSettings();
+    });
+
+    this.p1RandomizeButton.addEventListener('click', () => {
+      randomize('player-one');
+    });
+
+    this.p2RandomizeButton.addEventListener('click', () => {
+      randomize('player-two');
+    });
+
+    this.hideButton.addEventListener('click', () => {
+      const shipCells = document.querySelectorAll('[isShip="yes"]');
+      shipCells.forEach((shipCell) => {
+        shipCell.classList.remove('visibility');
+      });
+    });
+
+    this.closeInstructionsButton.addEventListener('click', () => {
+      this.instructionDialog.close();
     });
   }
 
@@ -54,13 +93,53 @@ export default class UserInterface {
     this.gameSetupDialog.showModal();
   }
 
-  renderGameboard(name, grid, playHumanRound, whoseTurn) {
-    const div = document.createElement('div');
-    div.classList.add('board');
-    div.id = name;
-    const p = document.createElement('p');
-    p.textContent = name;
-    div.appendChild(p);
+  openInstructions() {
+    this.instructionDialog.showModal();
+  }
+
+  async renderShips(playerID) {
+    const shipsDiv = document.querySelector(`#${playerID}>div.ships-div`);
+    for (let i = 0; i < 5; i++) {
+      const img = document.createElement('img');
+      await import(`../../assets/ship-0${i + 1}.png`).then((imgObj) => {
+        img.src = imgObj.default;
+        img.classList.add('active');
+        img.setAttribute('playerID', playerID);
+        img.setAttribute('idx', i);
+      });
+      shipsDiv.appendChild(img);
+    }
+  }
+
+  toggleShipVisibility(playerID) {
+    const shipCells = document.querySelectorAll(`#${playerID} [isShip="yes"]`);
+    shipCells.forEach((shipCell) => {
+      shipCell.classList.toggle('visibility');
+    });
+  }
+
+  disableRandomizeButton(playerID) {
+    const btn = document.querySelector(`#${playerID}>button.randomize-btn`);
+    btn.disabled = true;
+  }
+
+  enableRandomizeButton(playerID) {
+    const btn = document.querySelector(`#${playerID}>button.randomize-btn`);
+    btn.disabled = false;
+  }
+
+  renderGameboard(
+    playerID,
+    name,
+    grid,
+    playHumanRound,
+    whoseTurn,
+    checkAllReady
+  ) {
+    const boardDiv = document.querySelector(`#${playerID}>div.board-div`);
+    boardDiv.replaceChildren();
+    const playerPara = document.querySelector(`#${playerID}>p.player-para`);
+    playerPara.textContent = name;
     grid.forEach((row, rowIndex) => {
       const rowDiv = document.createElement('div');
       rowDiv.classList.add('row');
@@ -78,6 +157,7 @@ export default class UserInterface {
         cellDiv.addEventListener('click', (e) => {
           if (
             whoseTurn() === name || // a player can't click on their own cell
+            checkAllReady() === false || // atleast one player has not finished placing ships
             cellDiv.getAttribute('isMarked') === 'yes' // if cell already marked do nothing
           )
             return;
@@ -85,14 +165,13 @@ export default class UserInterface {
           playHumanRound(rowIndex, colIndex);
         });
       });
-      div.appendChild(rowDiv);
+      boardDiv.appendChild(rowDiv);
     });
-    this.playArea.appendChild(div);
   }
 
-  repaintCell(boardID, x, y) {
-    const board = document.getElementById(boardID);
-    const rows = [...board.children].splice(1); // first element is header so it must be skipped
+  repaintCell(playerID, x, y) {
+    const boardDiv = document.querySelector(`#${playerID}>div.board-div`);
+    const rows = [...boardDiv.children];
     rows.forEach((row, i) => {
       const cells = [...row.children];
       cells.forEach((cell, j) => {
@@ -120,7 +199,13 @@ export default class UserInterface {
   }
 
   clearPlayArea() {
-    const playArea = document.querySelector('.play-area');
-    playArea.replaceChildren();
+    const boardDivs = document.querySelectorAll('.board-div');
+    const shipDivs = document.querySelectorAll('.ships-div');
+    boardDivs.forEach((div) => {
+      div.replaceChildren();
+    });
+    shipDivs.forEach((div) => {
+      div.replaceChildren();
+    });
   }
 }
