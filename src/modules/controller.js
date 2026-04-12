@@ -8,7 +8,7 @@ export default class Controller {
     this.roundPlayer;
     this.possibleComputerMoves = [];
     this.populateComputerMoves();
-    this.allReady = false;
+    this.gameStarted = false;
   }
 
   populateComputerMoves() {
@@ -71,6 +71,7 @@ export default class Controller {
   }
 
   randomize(playerID) {
+    if (this.gameStarted) return; // if game has begun then randomize does nothing
     for (const player of this.players) {
       if (player.ID === playerID) {
         player.gameBoard.randomlyPlaceShips();
@@ -96,6 +97,7 @@ export default class Controller {
 
   playHumanRound(x, y) {
     console.log(`${this.roundPlayer.name} clicked [${x}, ${y}].`);
+    this.gameStarted = true;
     this.togglePlayer(); // toggle first so that right board is updated
     this.handleAttack(x, y);
     if (this.checkWinner()) return;
@@ -159,5 +161,6 @@ export default class Controller {
     this.players = [];
     this.possibleComputerMoves = [];
     this.populateComputerMoves();
+    this.gameStarted = false;
   }
 }
